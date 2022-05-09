@@ -79,6 +79,12 @@ class Bot(commands.Bot):
                                 ({'{:,}'.format(self.last_winner['casket'] - self.last_winner['guess'])}gp off).")
             else:
                 await ctx.send("No winners today FeelsBadMan")
+                
+    @commands.command()
+    async def refresh(self, ctx: commands.Context):
+        if ctx.author.is_broadcaster:
+            await ctx.send("Bot is being refreshed")
+            self.init_setup()
 
         
     def init_setup(self):
@@ -165,7 +171,6 @@ class Bot(commands.Bot):
         for k in chatters['chatters'].keys():
             current_viewers.append(chatters['chatters'][k])
         current_viewers = [item for sublist in current_viewers for item in sublist]
-        current_viewers.append('wlmao22')
         return(current_viewers)
     
     @commands.command()
