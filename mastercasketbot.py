@@ -12,7 +12,7 @@
 from email import message
 from twitchio.ext import commands
 import re
-from config_private import config
+from config import config
 import json
 import datetime
 import aiofiles
@@ -177,7 +177,7 @@ class Bot(commands.Bot):
                 self.current_counts.clear()
                 self.users = await self.get_userlist()
                 self.log_guesses = True
-                await ctx.send("Guessing for Master Casket value is now OPEN!")
+                await ctx.send("Guessing for Master Casket value is now OPEN! jaseCasket")
                 print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] {ctx.author.display_name} has started logging guesses in channel: {ctx.channel.name}")
             else:
                 await ctx.send("Guessing already enabled, please ?end before starting a new one.")
@@ -267,7 +267,7 @@ class Bot(commands.Bot):
                     res_key, res_val = min(self.current_guesses.items(), key=lambda x: abs(casket - x[1]))
                     await ctx.send(f"Closest guess: @{res_key} Clap out of {len(self.current_guesses.keys())} entries with a \
                         guess of {'{:,}'.format(res_val)} [Difference: { '{:,}'.format(abs(casket - self.current_guesses[res_key])) }] \
-                            {'They won last time too! POGGIES' if res_key == self.last_winner['name'] else ''}")
+                            {'They won last time too! jaseLFG' if res_key == self.last_winner['name'] else ''}")
                     self.last_winner['name'] = res_key
                     self.last_winner['guess'] = res_val
                     self.last_winner['casket'] = casket
@@ -275,7 +275,7 @@ class Bot(commands.Bot):
 
                     print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] Closest guess: @{res_key} Clap out \
                         of {len(self.current_guesses.keys())} entries with a guess of {'{:,}'.format(res_val)} [Difference: {abs(casket - self.current_guesses[res_key])}] \
-                            {'They won last time too! POGGIES' if res_key == self.last_winner['name'] else ''}")
+                            {'They won last time too! jaseLFG' if res_key == self.last_winner['name'] else ''}")
                     for key, val in self.current_guesses.items():
                         self.db.insert({'date': win_date, 'time': win_time, 'name': key, 'guess': val, 'casket': casket})
                 else:
