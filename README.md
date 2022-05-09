@@ -14,8 +14,7 @@ As the broadcaster you will follow the below steps:
 2. `?end` | This triggers the bot to end logging.
 3. `?winner <number>` | This declares the true casket value. This can be an `<INT>` or shorthand number formats like `100k | 100,000 | 100.000`
 
-## User Commands
-As users there are two commands that are currently enabled with 10 second cooldowns.
+## Broadcaster commands
 
 1. `?stats` | Display stats for the current livestream. This will display how many guesses have been logged cumulatively as well as how many caskets have been opened and their average value.
 2. `?lastwinner` | Displays who won the last round of guessing.
