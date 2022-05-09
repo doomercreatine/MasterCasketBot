@@ -21,7 +21,7 @@ import logging
 import requests
 import time
 from tinydb import TinyDB, Query
-logging.basicConfig(format='%(asctime)s %(message)s', filename='./casket.log', encoding='utf-8', level=logging.DEBUG)
+logging.basicConfig(format='%(asctime)s %(message)s', filename='./casket.log', encoding='utf-8', level=logging.ERROR)
 
 class Bot(commands.Bot):
 
@@ -51,7 +51,7 @@ class Bot(commands.Bot):
     async def botcheck(self, ctx: commands.Context):
         if ctx.author.is_broadcaster or ctx.author.display_name == "DoomerCreatine":
 
-            await ctx.send(f'{self.nick} is online and running {ctx.author.display_name}')
+            await ctx.send(f'{self.nick} is online and running {ctx.author.display_name} jaseHypers ')
             print(f'[{datetime.datetime.now().strftime("%H:%M:%S")}] {ctx.author.display_name} has checked if the bot is online in {ctx.channel.name}')
 
     
