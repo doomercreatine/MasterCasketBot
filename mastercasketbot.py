@@ -58,11 +58,12 @@ class Bot(commands.Bot):
     @commands.command()
     @commands.cooldown(1,10,commands.Bucket.user)
     async def stats(self, ctx: commands.Context):
-        if self.casket_values:
-            await ctx.send(f"There have been a total of {self.total_guesses} guesses today. There have been {len(self.casket_values)} \
-                caskets for an average value of {'{:,}'.format(sum(self.casket_values)/len(self.casket_values))} gp/casket POGGIES")
-        else:
-            await ctx.send("No caskets logged today.")
+        if ctx.author.is_broadcaster:
+            if self.casket_values:
+                await ctx.send(f"There have been a total of {self.total_guesses} guesses today. There have been {len(self.casket_values)} \
+                    caskets for an average value of {'{:,}'.format(sum(self.casket_values)/len(self.casket_values))} gp/casket POGGIES")
+            else:
+                await ctx.send("No caskets logged today.")
 
     
     """
@@ -71,12 +72,13 @@ class Bot(commands.Bot):
     @commands.command()
     @commands.cooldown(1,10,commands.Bucket.user)
     async def lastwinner(self, ctx: commands.Context):
-        if self.last_winner:
-            await ctx.send(f"The last winner was: {self.last_winner['name']} with a guess of {'{:,}'.format(self.last_winner['guess'])}gp on a \
-                        {'{:,}'.format(self.last_winner['casket'])}gp casket \
-                            ({'{:,}'.format(self.last_winner['casket'] - self.last_winner['guess'])}gp off).")
-        else:
-            await ctx.send("No winners today FeelsBadMan")
+        if ctx.author.is_broadcaster:
+            if self.last_winner:
+                await ctx.send(f"The last winner was: {self.last_winner['name']} with a guess of {'{:,}'.format(self.last_winner['guess'])}gp on a \
+                            {'{:,}'.format(self.last_winner['casket'])}gp casket \
+                                ({'{:,}'.format(self.last_winner['casket'] - self.last_winner['guess'])}gp off).")
+            else:
+                await ctx.send("No winners today FeelsBadMan")
 
         
     def init_setup(self):
@@ -236,25 +238,26 @@ class Bot(commands.Bot):
                 print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] {ctx.author.display_name} \
                     has ended logging guesses in channel: {ctx.channel.name}")
                 
-        """_summary_
+    """_summary_
     Command to determine the winner. Find the chatter who's guess was closest to the actual casket value.
     All guesses and raw messages are logged for future review.
     """
     @commands.command()
     async def winner(self, ctx: commands.Context, casket: str):
-        win_date = datetime.datetime.now().strftime("%Y%m%d")
-        win_time = datetime.datetime.now().strftime("%H%M%S")
-        # TODO move all of the formatting steps to a standalone function
-        formatted_v = re.search(r"(?<![\/\\aAcCdDeEfFgGhHiIjJlLnNoOpPqQrRsStTuUvVwWxXyYzZ])[0-9\s,.]+(?![\/\\aAcCdDeEfFgGhHiIjJlLnNoOpPqQrRsStTuUvVwWxXyYzZ]+\b)\s*[,.]*[kKmMbB]{0,1}\s*[0-9]*", 
-                                casket).group().strip()
-        formatted_v = re.sub(r',', '.', formatted_v).lower()
-        # If the chatter used k, m, or b for shorthand, attempt to convert to int
-        if 'k' in formatted_v or 'm' in formatted_v or 'b' in formatted_v:
-            casket = int(float(formatted_v[0:-1]) * self.tens[formatted_v[-1]])
-        else:
-            formatted_v = re.sub(r'[^\w\s]', '', formatted_v).lower()
-            casket = int(formatted_v)
         if ctx.author.is_broadcaster:
+            win_date = datetime.datetime.now().strftime("%Y%m%d")
+            win_time = datetime.datetime.now().strftime("%H%M%S")
+            # TODO move all of the formatting steps to a standalone function
+            formatted_v = re.search(r"(?<![\/\\aAcCdDeEfFgGhHiIjJlLnNoOpPqQrRsStTuUvVwWxXyYzZ])[0-9\s,.]+(?![\/\\aAcCdDeEfFgGhHiIjJlLnNoOpPqQrRsStTuUvVwWxXyYzZ]+\b)\s*[,.]*[kKmMbB]{0,1}\s*[0-9]*", 
+                                    casket).group().strip()
+            formatted_v = re.sub(r',', '.', formatted_v).lower()
+            # If the chatter used k, m, or b for shorthand, attempt to convert to int
+            if 'k' in formatted_v or 'm' in formatted_v or 'b' in formatted_v:
+                casket = int(float(formatted_v[0:-1]) * self.tens[formatted_v[-1]])
+            else:
+                formatted_v = re.sub(r'[^\w\s]', '', formatted_v).lower()
+                casket = int(formatted_v)
+        
             if not self.log_guesses:  
                 self.current_guesses = {k: v for k, v in self.current_guesses.items() if v}
                 if self.current_guesses:   
@@ -292,11 +295,6 @@ class Bot(commands.Bot):
             else:
                 await ctx.send("Hey you need to ?end the guessing first 4Head")
                 print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] {ctx.author.display_name} tried to pick a winner in {ctx.channel.name} without ending first.")
-
-    
-    @commands.command()
-    async def guesses(self, ctx: commands.Context):
-        print(self.current_guesses)
         
 bot = Bot()
 bot.run()
