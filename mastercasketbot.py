@@ -12,7 +12,7 @@
 from email import message
 from twitchio.ext import commands
 import re
-from config import config
+from config_private import config
 import json
 import datetime
 import aiofiles
@@ -208,12 +208,11 @@ class Bot(commands.Bot):
                     if self.current_counts[message.author.display_name] == 1:
                         await message.channel.send(f"You have guessed already {message.author.display_name}. \
                             You guessed {'{:,}'.format(self.current_guesses[message.author.display_name])} but you tried to guess again with \
-                                {'{:,}'.format(formatted_v)}. Your most recent guess of {'{:,}'.format(formatted_v)} is now locked in NothingYouCanDo")
+                                {'{:,}'.format(formatted_v)}. If you mistyped first guess then you can send in a new one that will be final. You will not get confirmation.")
                         self.current_guesses[message.author.display_name] = formatted_v
                         self.current_counts[message.author.display_name] += 1
-                    elif self.current_counts[message.author.display_name] == 2:
-                        await message.channel.send(f"Stop guessing, {message.author.display_name}, you already have {'{:,}'.format(self.current_guesses[message.author.display_name])} locked in.")
-                        self.current_counts[message.author.display_name] += 1
+                    elif self.current_counts[message.author.display_name] > 2:
+                        pass
                 else:
                     self.current_guesses[message.author.display_name] = formatted_v
                     self.current_counts[message.author.display_name] = 1
