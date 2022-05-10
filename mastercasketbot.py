@@ -60,8 +60,8 @@ class Bot(commands.Bot):
     async def stats(self, ctx: commands.Context):
         if ctx.author.is_broadcaster:
             if self.casket_values:
-                await ctx.send(f"There have been a total of {self.total_guesses} guesses today. There have been {len(self.casket_values)} \
-                    caskets for an average value of {'{:,}'.format(sum(self.casket_values)/len(self.casket_values))} gp/casket POGGIES")
+                await ctx.send(f"Today's guesses: {self.total_guesses}. Caskets today: {len(self.casket_values)} \
+                    Average casket value: {'{:,}'.format(sum(self.casket_values)/len(self.casket_values))}gp jaseCasket")
             else:
                 await ctx.send("No caskets logged today.")
 
@@ -75,8 +75,7 @@ class Bot(commands.Bot):
         if ctx.author.is_broadcaster:
             if self.last_winner:
                 await ctx.send(f"The last winner was: {self.last_winner['name']} with a guess of {'{:,}'.format(self.last_winner['guess'])}gp on a \
-                            {'{:,}'.format(self.last_winner['casket'])}gp casket \
-                                ({'{:,}'.format(self.last_winner['casket'] - self.last_winner['guess'])}gp off).")
+                            {'{:,}'.format(self.last_winner['casket'])}gp casket.")
             else:
                 await ctx.send("No winners today FeelsBadMan")
                 
@@ -204,15 +203,18 @@ class Bot(commands.Bot):
             new_message = await self.emote_filter(text=message.content, index=emote_idx)
             try:
                 formatted_v = await self.fetch_guess(new_message)
+                # If the user has guessed already
                 if message.author.display_name in self.current_counts.keys():
+                    # If user has only 1 guess, they can change it once
                     if self.current_counts[message.author.display_name] == 1:
-                        await message.channel.send(f"You have guessed already {message.author.display_name}. \
-                            You guessed {'{:,}'.format(self.current_guesses[message.author.display_name])} but you tried to guess again with \
-                                {'{:,}'.format(formatted_v)}. If you mistyped first guess then you can send in a new one that will be final. You will not get confirmation.")
+                        await message.channel.send(f"@{message.author.display_name}. You guessed {'{:,}'.format(self.current_guesses[message.author.display_name])}, \
+                            If you want to keep {'{:,}'.format(formatted_v)} send it again.")
+                        self.current_counts[message.author.display_name] += 1
+                    # If they send the guess again after first message it will lock in that one
+                    elif self.current_counts[message.author.display_name] == 2:
                         self.current_guesses[message.author.display_name] = formatted_v
                         self.current_counts[message.author.display_name] += 1
-                    elif self.current_counts[message.author.display_name] > 2:
-                        pass
+                # If user is not in current_counts it means they have not guessed yet
                 else:
                     self.current_guesses[message.author.display_name] = formatted_v
                     self.current_counts[message.author.display_name] = 1
