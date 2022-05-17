@@ -12,7 +12,7 @@
 from email import message
 from twitchio.ext import commands
 import re
-from config_private import config
+from config import config
 import json
 import datetime
 import aiofiles
@@ -236,13 +236,11 @@ class Bot(commands.Bot):
         if ctx.author.is_broadcaster:
             if not self.log_guesses:
                 await ctx.send("Guessing is not currently enabled, oops. mericCat")
-                print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] {ctx.author.display_name} \
-                    tried to end guessing in {ctx.channel.name} but it was not started.")
+                print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] {ctx.author.display_name} tried to end guessing in {ctx.channel.name} but it was not started.")
             else:
                 self.log_guesses = False
                 await ctx.send("]=-[]=-[]=-[]=-[]=-[]=-[]=-[]=-[]=-[]=-[")
-                print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] {ctx.author.display_name} \
-                    has ended logging guesses in channel: {ctx.channel.name}")
+                print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] {ctx.author.display_name} has ended logging guesses in channel: {ctx.channel.name}")
                 
     """_summary_
     Command to determine the winner. Find the chatter who's guess was closest to the actual casket value.
@@ -274,14 +272,14 @@ class Bot(commands.Bot):
                     await ctx.send(f"Closest guess: @{res_key} Clap out of {len(self.current_guesses.keys())} entries with a \
                         guess of {'{:,}'.format(res_val)} [Difference: { '{:,}'.format(abs(casket - self.current_guesses[res_key])) }] \
                             {'They won last time too! jaseLFG' if res_key == self.last_winner['name'] else ''}")
+                    
+                    print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] Closest guess: @{res_key} Clap out of {len(self.current_guesses.keys())} entries with a guess of {'{:,}'.format(res_val)} [Difference: {abs(casket - self.current_guesses[res_key])}] {'They won last time too! jaseLFG' if res_key == self.last_winner['name'] else ''}")
                     self.last_winner['name'] = res_key
                     self.last_winner['guess'] = res_val
                     self.last_winner['casket'] = casket
                     self.casket_values.append(casket)
 
-                    print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] Closest guess: @{res_key} Clap out \
-                        of {len(self.current_guesses.keys())} entries with a guess of {'{:,}'.format(res_val)} [Difference: {abs(casket - self.current_guesses[res_key])}] \
-                            {'They won last time too! jaseLFG' if res_key == self.last_winner['name'] else ''}")
+
                     for key, val in self.current_guesses.items():
                         self.db.insert({'date': win_date, 'time': win_time, 'name': key, 'guess': val, 'casket': casket})
                 else:
