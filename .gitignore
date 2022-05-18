@@ -1,3 +1,5 @@
 config_private.py
-casketdashboard.py
-debugging.py
+config.py
+logging/
+casket.log
+__pycache__/
