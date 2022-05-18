@@ -1,1 +1,5 @@
 config_private.py
+config.py
+logging/
+casket.log
+__pycache__/
