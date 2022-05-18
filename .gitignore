@@ -3,3 +3,5 @@ config.py
 logging/
 casket.log
 __pycache__/
+casketdashboard.py
+debugging.py
