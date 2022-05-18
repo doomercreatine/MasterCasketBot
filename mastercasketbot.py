@@ -275,13 +275,13 @@ class Bot(commands.Bot):
                         if item == res_val:
                             winners.append(key)
 
-                    winners = [f"@{item}" for item in winners]
-                    await ctx.send(f"Closest guess: {' '.join(winners)} Clap out of {len(self.current_guesses.keys())} entries with a \
+                    #winners = [f"@{item}" for item in winners]
+                    await ctx.send(f"Closest guess: {' '.join([f'@{item}' for item in winners])} Clap out of {len(self.current_guesses.keys())} entries with a \
                         guess of {'{:,}'.format(res_val)} [Difference: { '{:,}'.format(abs(casket - self.current_guesses[res_key])) }] \
-                            {'They won last time too! jaseLFG' if res_key == self.last_winner['name'] else ''}")
+                            {'They won last time too! jaseLFG' if res_key in self.last_winner['name'] else ''}")
                     
-                    print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] Closest guess: @{' '.join(winners)} Clap out of {len(self.current_guesses.keys())} entries with a guess of {'{:,}'.format(res_val)} [Difference: {abs(casket - self.current_guesses[res_key])}] {'They won last time too! jaseLFG' if res_key == self.last_winner['name'] else ''}")
-                    self.last_winner['name'] = res_key
+                    print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] Closest guess: {' '.join([f'@{item}' for item in winners])} Clap out of {len(self.current_guesses.keys())} entries with a guess of {'{:,}'.format(res_val)} [Difference: {abs(casket - self.current_guesses[res_key])}] {'They won last time too! jaseLFG' if res_key == self.last_winner['name'] else ''}")
+                    self.last_winner['name'] = winners
                     self.last_winner['guess'] = res_val
                     self.last_winner['casket'] = casket
                     self.casket_values.append(casket)
