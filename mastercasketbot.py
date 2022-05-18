@@ -132,7 +132,8 @@ class Bot(commands.Bot):
                            "]+", flags=re.UNICODE)
         return(emote_list)
     
-    
+
+
     async def emote_filter(self, text, index):
         new_text = list(text)
         if len(index)>=1:
@@ -269,11 +270,17 @@ class Bot(commands.Bot):
                     # TODO move this to its own function. Change the dict calls since the guesses dict will have a dict in the value slot for the key
            
                     res_key, res_val = min(self.current_guesses.items(), key=lambda x: abs(casket - x[1]))
-                    await ctx.send(f"Closest guess: @{res_key} Clap out of {len(self.current_guesses.keys())} entries with a \
+                    winners = []
+                    for key, item in self.current_guesses.items():
+                        if item == res_val:
+                            winners.append(key)
+
+                    winners = [f"@{item}" for item in winners]
+                    await ctx.send(f"Closest guess: {' '.join(winners)} Clap out of {len(self.current_guesses.keys())} entries with a \
                         guess of {'{:,}'.format(res_val)} [Difference: { '{:,}'.format(abs(casket - self.current_guesses[res_key])) }] \
                             {'They won last time too! jaseLFG' if res_key == self.last_winner['name'] else ''}")
                     
-                    print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] Closest guess: @{res_key} Clap out of {len(self.current_guesses.keys())} entries with a guess of {'{:,}'.format(res_val)} [Difference: {abs(casket - self.current_guesses[res_key])}] {'They won last time too! jaseLFG' if res_key == self.last_winner['name'] else ''}")
+                    print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] Closest guess: @{' '.join(winners)} Clap out of {len(self.current_guesses.keys())} entries with a guess of {'{:,}'.format(res_val)} [Difference: {abs(casket - self.current_guesses[res_key])}] {'They won last time too! jaseLFG' if res_key == self.last_winner['name'] else ''}")
                     self.last_winner['name'] = res_key
                     self.last_winner['guess'] = res_val
                     self.last_winner['casket'] = casket
