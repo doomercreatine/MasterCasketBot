@@ -288,7 +288,7 @@ class Bot(commands.Bot):
 
 
                     for key, val in self.current_guesses.items():
-                        self.db.insert({'date': win_date, 'time': win_time, 'name': key, 'guess': val, 'casket': casket})
+                        self.db.insert({'date': win_date, 'time': win_time, 'name': key, 'guess': val, 'casket': casket, 'win': 'yes' if key in winners else 'no'})
                 else:
                     # If for some reason no winner was found we need to review later. Not expected to happen with a large chat
                     await ctx.send("Something went wrong, there were no guesses saved. mericChicken")
