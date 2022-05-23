@@ -61,7 +61,7 @@ class Bot(commands.Bot):
         if ctx.author.is_broadcaster:
             if self.casket_values:
                 await ctx.send(f"Today's guesses: {self.total_guesses}. Caskets today: {len(self.casket_values)} \
-                    Average casket value: {'{:,}'.format(sum(self.casket_values)/len(self.casket_values))}gp jaseCasket")
+                    Average casket value: {'{:,}'.format(int(sum(self.casket_values)/len(self.casket_values)))}gp jaseCasket")
             else:
                 await ctx.send("No caskets logged today.")
 
