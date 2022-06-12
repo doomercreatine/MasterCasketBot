@@ -206,8 +206,10 @@ class Bot(commands.Bot):
                 formatted_v = await self.fetch_guess(new_message)
                 # If the user has guessed already
                 if message.author.display_name in self.current_counts.keys():
+                    if self.current_guesses[message.author.display_name] == formatted_v:
+                        pass
                     # If user has only 1 guess, they can change it once
-                    if self.current_counts[message.author.display_name] == 1:
+                    elif self.current_counts[message.author.display_name] == 1:
                         await message.channel.send(f"@{message.author.display_name}. You guessed {'{:,}'.format(self.current_guesses[message.author.display_name])}, \
                             If you want to keep {'{:,}'.format(formatted_v)} send it again.")
                         self.current_counts[message.author.display_name] += 1
