@@ -51,7 +51,7 @@ class Bot(commands.Bot):
     async def botcheck(self, ctx: commands.Context):
         if ctx.author.is_broadcaster or ctx.author.display_name == "DoomerCreatine":
 
-            await ctx.send(f'{self.nick} is online and running {ctx.author.display_name} jaseHypers ')
+            await ctx.send(f'/me is online and running {ctx.author.display_name} POGGIES ')
             print(f'[{datetime.datetime.now().strftime("%H:%M:%S")}] {ctx.author.display_name} has checked if the bot is online in {ctx.channel.name}')
 
     
@@ -87,7 +87,7 @@ class Bot(commands.Bot):
 
         
     def init_setup(self):
-        self.db = TinyDB('./casket_db.json')
+        self.db = TinyDB('./updated_db.json')
         self.emote_list = self.fetch_emotes()
         self.log_guesses = False
         self.current_guesses = {}
@@ -182,7 +182,7 @@ class Bot(commands.Bot):
                 self.current_counts.clear()
                 self.users = await self.get_userlist()
                 self.log_guesses = True
-                await ctx.send("Guessing for Master Casket value is now OPEN! jaseCasket")
+                await ctx.send("Guessing for Master Casket value is now OPEN! POGGIES")
                 print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] {ctx.author.display_name} has started logging guesses in channel: {ctx.channel.name}")
             else:
                 await ctx.send("Guessing already enabled, please ?end before starting a new one.")
