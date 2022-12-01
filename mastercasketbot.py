@@ -21,6 +21,7 @@ import logging
 import requests
 import time
 from tinydb import TinyDB, Query
+import pandas as pd
 logging.basicConfig(format='%(asctime)s %(message)s', filename='./casket.log', encoding='utf-8', level=logging.ERROR)
 
 class Bot(commands.Bot):
@@ -61,7 +62,7 @@ class Bot(commands.Bot):
         if ctx.author.is_broadcaster:
             if self.casket_values:
                 await ctx.send(f"Today's guesses: {self.total_guesses}. Caskets today: {len(self.casket_values)} \
-                    Average casket value: {'{:,}'.format(int(sum(self.casket_values)/len(self.casket_values)))}gp jaseCasket")
+                    Average casket value: {'{:,}'.format(int(sum(self.casket_values)/len(self.casket_values)))}gp HYPERS")
             else:
                 await ctx.send("No caskets logged today.")
 
@@ -89,6 +90,7 @@ class Bot(commands.Bot):
     def init_setup(self):
         self.db = TinyDB('./updated_db.json')
         self.emote_list = self.fetch_emotes()
+        self.win_list = self.load_winners()
         self.log_guesses = False
         self.current_guesses = {}
         self.current_messages = {}
@@ -101,6 +103,22 @@ class Bot(commands.Bot):
         self.lw_cd = False
         self.tens = dict(k=1e3, m=1e6, b=1e9)
         self.punc = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
+    
+    def load_winners(self):
+        df = pd.read_json("./updated_db.json")
+        guesses = [item for item in iter(df['_default'])]
+        df = pd.DataFrame(guesses,
+                columns=['date', 'time', 'name', 'guess', 'casket', 'win'])
+        winners = {}
+
+        for _, item in df.iterrows():
+            if item['win'] == 'yes':
+                if item['name'] in winners.keys():
+                    winners[item['name']] += 1
+                else:
+                    winners[item['name']] = 1
+
+        return(winners)
         
     def fetch_emotes(self):
         emote_list = []
@@ -276,11 +294,14 @@ class Bot(commands.Bot):
                     for key, item in self.current_guesses.items():
                         if item == res_val:
                             winners.append(key)
-
-                    #winners = [f"@{item}" for item in winners]
+                        if key in self.win_list.keys():
+                            self.win_list[key] += 1
+                        else:
+                            self.win_list[key] = 1
+                    
                     await ctx.send(f"Closest guess: {' '.join([f'@{item}' for item in winners])} Clap out of {len(self.current_guesses.keys())} entries with a \
-                        guess of {'{:,}'.format(res_val)} [Difference: { '{:,}'.format(abs(casket - self.current_guesses[res_key])) }] \
-                            {'They won last time too! jaseLFG' if res_key in self.last_winner['name'] else ''}")
+                        guess of {'{:,}'.format(res_val)} [Difference: { '{:,}'.format(abs(casket - self.current_guesses[res_key])) }]. {' | '.join([f'{item} {self.win_list[item]} win(s)' for item in winners])}  \
+                            ")
                     
                     print(f"[{datetime.datetime.now().strftime('%H:%M:%S')}] Closest guess: {' '.join([f'@{item}' for item in winners])} Clap out of {len(self.current_guesses.keys())} entries with a guess of {'{:,}'.format(res_val)} [Difference: {abs(casket - self.current_guesses[res_key])}] {'They won last time too! jaseLFG' if res_key == self.last_winner['name'] else ''}")
                     self.last_winner['name'] = winners
